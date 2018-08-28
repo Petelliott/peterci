@@ -2,10 +2,7 @@
   (:use :cl)
   (:export
     #:*docker-uri*
-    #:create
-    #:dpath
-    #:json-post
-    #:json-get))
+    #:container-create))
 
 
 (in-package :builder.docker)
@@ -14,7 +11,7 @@
 (defvar *docker-uri* "http://localhost:2735/")
 
 
-(defun create (image)
+(defun container-create (image)
   (cdr
     (assoc
       :*id
@@ -23,21 +20,56 @@
         `(("Image" . ,image))))))
 
 
-(defun dpath (path)
-  (concatenate
-    'string *docker-uri*
-    (if (and (> (length path) 0) (equal (elt path 0) #\/))
-      (subseq path 1)
-      path)))
+(defun container-wait (container)
+  (cdr
+    (assoc
+      :*StatusCode
+      (json-post
+        (dpath "containers" container "wait")))))
 
 
-(defun json-post (uri data)
+
+
+(defun dpath (&rest paths)
+  (apply #'pmerge (cons *docker-uri* paths)))
+
+
+(defun pmerge (&rest paths)
+  (cond
+    ((= (length paths) 0) "")
+    ((= (length paths) 1) (car paths))
+    (t
+      (concatenate
+        'string
+        (if (ends-with (car paths) "/")
+          (car paths)
+          (concatenate 'string (car paths) "/"))
+        (let ((prest (apply #'pmerge (cdr paths))))
+          (if (starts-with prest "/")
+            (subseq prest 1)
+            prest))))))
+
+
+(defun starts-with (whole start)
+  (and
+    (<= (length start) (length whole))
+    (equal (subseq whole 0 (length start)) start)))
+
+
+(defun ends-with (whole end)
+  (and
+    (<= (length end) (length whole))
+    (equal (subseq whole (- (length whole) (length end))) end)))
+
+
+(defun json-post (uri &optional data)
   (json:decode-json-from-string
     (dex:post
       uri
       :headers '(("Content-Type" . "application/json"))
-      :content (json:encode-json-to-string
-                 data))))
+      :content (if data
+                 (json:encode-json-to-string data)
+                 nil))))
 
 
 (defun json-get (uri)

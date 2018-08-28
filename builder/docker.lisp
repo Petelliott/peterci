@@ -4,6 +4,8 @@
     #:*docker-uri*
     #:container-create
     #:container-wait
+    #:container-start
+    #:container-stop
     #:container-delete))
 
 
@@ -28,6 +30,16 @@
       :*StatusCode
       (json-post
         (dpath "containers" container "wait")))))
+
+
+(defun container-start (container)
+  (dex:post
+    (dpath "containers" container "start")))
+
+
+(defun container-stop (container)
+  (dex:post
+    (dpath "containers" container "stop")))
 
 
 (defun container-delete (container)

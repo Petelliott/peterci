@@ -28,7 +28,7 @@
 (defun container-wait (container)
   (cdr
     (assoc
-      :*StatusCode
+      :*Status-Code
       (json-post
         (dpath "containers" container "wait")))))
 

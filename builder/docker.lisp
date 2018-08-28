@@ -2,7 +2,9 @@
   (:use :cl)
   (:export
     #:*docker-uri*
-    #:container-create))
+    #:container-create
+    #:container-wait
+    #:container-delete))
 
 
 (in-package :builder.docker)
@@ -27,6 +29,10 @@
       (json-post
         (dpath "containers" container "wait")))))
 
+
+(defun container-delete (container)
+  (dex:delete
+    (dpath "containers" container)))
 
 
 

@@ -6,7 +6,8 @@
     #:container-wait
     #:container-start
     #:container-stop
-    #:container-delete))
+    #:container-delete
+    #:container-put-archive))
 
 
 (in-package :builder.docker)
@@ -46,6 +47,12 @@
   (dex:delete
     (dpath "containers" container)))
 
+
+(defun container-put-archive (container ar-path)
+  (dex:put
+    (dpath "containers" container "archive?path=/repo")
+    :headers '(("Content-Type" . "application/x-tar"))
+    :content (pathname ar-path)))
 
 
 (defun dpath (&rest paths)

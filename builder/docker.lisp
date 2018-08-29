@@ -7,7 +7,8 @@
     #:container-start
     #:container-stop
     #:container-delete
-    #:container-put-archive))
+    #:container-put-archive
+    #:container-get-logs))
 
 
 (in-package :builder.docker)
@@ -53,6 +54,22 @@
     (dpath "containers" container "archive?path=/repo")
     :headers '(("Content-Type" . "application/x-tar"))
     :content (pathname ar-path)))
+
+
+(defun container-get-logs (container)
+  (parse-log-sream
+    (dex:get
+      (dpath "containers" container "logs?stdout=1&stderr=1"))))
+
+
+(defun parse-log-stream (vec)
+  (setf vec (subseq vec 8))
+
+  (with-output-to-string (strm)
+    (dotimes (i (length vec))
+      (write-char (code-char (elt vec i)) strm)
+      (if (= (elt vec i) (char-code #\newline))
+        (incf i 8)))))
 
 
 (defun dpath (&rest paths)

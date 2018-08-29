@@ -1,18 +1,19 @@
-(defpackage :builder
-  (:use :cl :builder.docker)
+(defpackage :peterci.builder
+  (:use :cl)
+  (:nicknames :builder)
   (:export
     #:build))
 
-(in-package :builder)
+(in-package :peterci.builder)
 
 
 (defun build (ar-file &optional (image "peterci-env"))
-  (let ((con (container-create image)))
-    (container-put-archive con ar-file)
-    (container-start con)
+  (let ((con (docker:container-create image)))
+    (docker:container-put-archive con ar-file)
+    (docker:container-start con)
     (multiple-value-prog1
       (values
-        (container-wait con)
-        (container-get-logs con))
-      (container-delete con))))
+        (docker:container-wait con)
+        (docker:container-get-logs con))
+      (docker:container-delete con))))
 

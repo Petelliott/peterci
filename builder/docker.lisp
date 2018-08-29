@@ -1,5 +1,6 @@
-(defpackage :builder.docker
+(defpackage :peterci.builder.docker
   (:use :cl)
+  (:nicknames :docker)
   (:export
     #:*docker-uri*
     #:container-create
@@ -11,7 +12,7 @@
     #:container-get-logs))
 
 
-(in-package :builder.docker)
+(in-package :peterci.builder.docker)
 
 
 (defvar *docker-uri* "http://localhost:2735/")

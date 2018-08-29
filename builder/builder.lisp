@@ -8,12 +8,11 @@
 
 
 (defun build (ar-file &optional (image "peterci-env"))
-  (let ((con (docker:container-create image)))
+  "build the repo in ar-file and return the
+   build status and the logs"
+  (docker:with-container con image
     (docker:container-put-archive con ar-file)
     (docker:container-start con)
-    (multiple-value-prog1
-      (values
-        (docker:container-wait con)
-        (docker:container-get-logs con))
-      (docker:container-delete con))))
-
+    (values
+      (zerop (docker:container-wait con))
+      (docker:container-get-logs con))))

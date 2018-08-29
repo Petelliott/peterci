@@ -3,6 +3,7 @@
   (:nicknames :docker)
   (:export
     #:*docker-uri*
+    #:with-container
     #:container-create
     #:container-wait
     #:container-start
@@ -19,6 +20,15 @@
 ;; be made to. this variable can also be used to set
 ;; api version.
 (defvar *docker-uri* "http://localhost:2735/")
+
+
+(defmacro with-container (container image &rest forms)
+  "provides a temporary container that will be
+   deleted after the block ends"
+  `(let ((,container (container-create ,image)))
+     (multiple-value-prog1
+       (progn ,@forms)
+       (container-delete ,container))))
 
 
 (defun container-create (image)

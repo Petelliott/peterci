@@ -57,7 +57,7 @@
 
 
 (defun container-get-logs (container)
-  (parse-log-sream
+  (parse-log-stream
     (dex:get
       (dpath "containers" container "logs?stdout=1&stderr=1"))))
 

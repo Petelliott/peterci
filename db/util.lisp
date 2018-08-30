@@ -2,6 +2,7 @@
   (:nicknames :db-util)
   (:use cl)
   (:export
+    #:convert-repo-record
     #:db-oneshot
     #:itostat
     #:stattoi
@@ -10,6 +11,10 @@
     #:plist-set))
 
 (in-package :peterci.db.util)
+
+
+(defun convert-repo-record (record)
+  (plist-set record :|active| (itob (getf record :|active|))))
 
 
 (defun db-oneshot (conn qstr &rest vals)

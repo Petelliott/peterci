@@ -27,21 +27,21 @@
 
 (defun get-repo (conn id)
   "get the repo associated with id"
-  (let ((res (dbi:fetch
-               (db-oneshot conn
-                           "SELECT * FROM Repo WHERE id=?"
-                           id))))
-    (plist-set res :|active| (itob (getf res :|active|)))))
+  (convert-repo-record
+    (dbi:fetch
+      (db-oneshot conn
+                  "SELECT * FROM Repo WHERE id=?"
+                  id))))
 
 
 (defun get-repo-by-info (conn provider usr repo)
   "get the repo associated with the provider, usr, and repo"
-  (let ((res (dbi:fetch
-               (db-oneshot conn
-                           "SELECT * FROM Repo WHERE
-                           provider=? AND username=? AND repo=?"
-                           provider usr repo))))
-    (plist-set res :|active| (itob (getf res :|active|)))))
+  (convert-repo-record
+    (dbi:fetch
+      (db-oneshot conn
+                  "SELECT * FROM Repo WHERE
+                  provider=? AND username=? AND repo=?"
+                  provider usr repo))))
 
 
 (defun create-build (conn repo &optional (status :running) (logs nil))

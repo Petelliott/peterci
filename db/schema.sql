@@ -1,10 +1,11 @@
 CREATE TABLE Repo (
-    id int NOT NULL,
+    id INT NOT NULL,
     provider varchar(255) NOT NULL,
     user varchar(255) NOT NULL,
     repo varchar(255) NOT NULL,
     active boolean DEFAULT true,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE (provider, user, repo)
 );
 
 CREATE TABLE Build (

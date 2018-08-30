@@ -4,6 +4,7 @@
   (:use cl)
   (:export
     #:create-repo
+    #:get-repo
     #:create-build
     #:update-build))
 
@@ -23,6 +24,13 @@
           :|LAST_INSERT_ID()|)))
 
 
+(defun get-repo (conn id)
+  "get the repo associated with id"
+  (let ((res (dbi:fetch
+               (db-oneshot conn
+                           "SELECT * FROM Repo WHERE id=?"
+                           id))))
+    (plist-set res :|active| (itob (getf res :|active|)))))
 
 
 (defun create-build (conn repo &optional (status :running) (logs nil))
@@ -77,3 +85,24 @@
 
 (defun btoi (bool)
   (if bool 1 0))
+
+
+(defun itob (i)
+  (if (zerop i) nil t))
+
+
+(defun plist-set (plist key val)
+  (if plist
+    (if (eq key (car plist))
+      (mcons key val (cddr plist))
+      (mcons (car plist) (cadr plist)
+             (plist-set (cddr plist) key val)))
+    (list key val)))
+
+
+(defun mcons (&rest args)
+  (if (null (cdr args))
+    (car args)
+    (cons
+      (car args)
+      (apply #'mcons (cdr args)))))

@@ -10,4 +10,5 @@
   :depends-on (:cl-dbi)
   :components ((:module "db"
                 :components
-                ((:file "db")))))
+                ((:file "util")
+                 (:file "db")))))

@@ -1,7 +1,7 @@
 ;;; methods for using the db described in schema.sql
 (defpackage :peterci.db
   (:nicknames pdb)
-  (:use cl)
+  (:use :cl :peterci.db.util)
   (:export
     #:create-repo
     #:get-repo
@@ -68,41 +68,3 @@
   (db-oneshot conn
               "UPDATE Build SET logs=? WHERE id=?"
               logs id))
-
-
-(defun db-oneshot (conn qstr &rest vals)
-  (let ((query (dbi:prepare conn qstr)))
-    (apply #'dbi:execute query vals)))
-
-
-(defun itostat (i)
-  (elt #(:running :stopped :passed :failed) i))
-
-
-(defun stattoi (stat)
-  (getf '(:running 0 :stopped 1 :passed 2 :failed 3) stat))
-
-
-(defun btoi (bool)
-  (if bool 1 0))
-
-
-(defun itob (i)
-  (if (zerop i) nil t))
-
-
-(defun plist-set (plist key val)
-  (if plist
-    (if (eq key (car plist))
-      (mcons key val (cddr plist))
-      (mcons (car plist) (cadr plist)
-             (plist-set (cddr plist) key val)))
-    (list key val)))
-
-
-(defun mcons (&rest args)
-  (if (null (cdr args))
-    (car args)
-    (cons
-      (car args)
-      (apply #'mcons (cdr args)))))

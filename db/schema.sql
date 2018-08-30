@@ -11,7 +11,7 @@ CREATE TABLE Repo (
 CREATE TABLE Build (
     id int NOT NULL AUTO_INCREMENT,
     repo int NOT NULL,
-    status int NOT NULL,
+    status TINYINT DEFAULT 0,
     time DATETIME DEFAULT CURRENT_TIMESTAMP,
     logs TEXT,
     PRIMARY KEY (id, repo),

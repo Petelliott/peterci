@@ -3,7 +3,8 @@
   (:nicknames pdb)
   (:use cl)
   (:export
-    #:create-repo))
+    #:create-repo
+    #:create-build))
 
 (in-package :peterci.db)
 
@@ -21,9 +22,32 @@
           :|LAST_INSERT_ID()|)))
 
 
+
+
+(defun create-build (conn repo &optional (status :running) (logs nil))
+  (dbi:with-transaction conn
+    (db-oneshot conn
+                "INSERT INTO Build
+                (repo, status, logs)
+                VALUES (?, ?, ?)"
+                repo (stattoi status) logs)
+    (getf (dbi:fetch
+            (db-oneshot conn "SELECT LAST_INSERT_ID()"))
+          :|LAST_INSERT_ID()|)))
+
+
+
 (defun db-oneshot (conn qstr &rest vals)
   (let ((query (dbi:prepare conn qstr)))
     (apply #'dbi:execute query vals)))
+
+
+(defun itostat (i)
+  (elt #(:running :unfinished :passed :failed) i))
+
+
+(defun stattoi (stat)
+  (getf '(:running 0 :unfinished 1 :passed 2 :failed 3) stat))
 
 
 (defun btoi (bool)

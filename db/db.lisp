@@ -5,6 +5,7 @@
   (:export
     #:create-repo
     #:get-repo
+    #:get-repo-by-info
     #:create-build
     #:update-build))
 
@@ -30,6 +31,16 @@
                (db-oneshot conn
                            "SELECT * FROM Repo WHERE id=?"
                            id))))
+    (plist-set res :|active| (itob (getf res :|active|)))))
+
+
+(defun get-repo-by-info (conn provider usr repo)
+  "get the repo associated with the provider, usr, and repo"
+  (let ((res (dbi:fetch
+               (db-oneshot conn
+                           "SELECT * FROM Repo WHERE
+                           provider=? AND username=? AND repo=?"
+                           provider usr repo))))
     (plist-set res :|active| (itob (getf res :|active|)))))
 
 

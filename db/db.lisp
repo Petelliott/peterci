@@ -7,7 +7,8 @@
     #:get-repo
     #:get-repo-by-info
     #:create-build
-    #:update-build))
+    #:update-build
+    #:get-build))
 
 (in-package :peterci.db)
 
@@ -44,7 +45,7 @@
                   provider usr repo))))
 
 
-(defun create-build (conn repo &optional (status :running) (logs nil))
+(defun create-build (conn repo &optional (status :running) logs)
   (dbi:with-transaction conn
     (db-oneshot conn
                 "INSERT INTO Build
@@ -79,3 +80,13 @@
   (db-oneshot conn
               "UPDATE Build SET logs=? WHERE id=?"
               logs id))
+
+
+(defun get-build (conn id)
+  "get the build associated with ID"
+  (convert-build-record
+    (dbi:fetch
+      (db-oneshot conn
+                  "SELECT * FROM Build
+                  WHERE id=?"
+                  id))))

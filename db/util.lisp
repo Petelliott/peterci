@@ -3,6 +3,7 @@
   (:use cl)
   (:export
     #:convert-repo-record
+    #:convert-build-record
     #:db-oneshot
     #:itostat
     #:stattoi
@@ -15,6 +16,10 @@
 
 (defun convert-repo-record (record)
   (plist-set record :|active| (itob (getf record :|active|))))
+
+
+(defun convert-build-record (record)
+  (plist-set record :|status| (itostat (getf record :|status|))))
 
 
 (defun db-oneshot (conn qstr &rest vals)

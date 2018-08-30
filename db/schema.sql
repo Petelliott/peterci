@@ -14,6 +14,6 @@ CREATE TABLE Build (
     status TINYINT DEFAULT 0,
     time DATETIME DEFAULT CURRENT_TIMESTAMP,
     logs TEXT,
-    PRIMARY KEY (id, repo),
+    PRIMARY KEY (id),
     FOREIGN KEY (repo) REFERENCES Repo(id)
 );

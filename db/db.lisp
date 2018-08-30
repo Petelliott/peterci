@@ -4,7 +4,8 @@
   (:use cl)
   (:export
     #:create-repo
-    #:create-build))
+    #:create-build
+    #:update-build))
 
 (in-package :peterci.db)
 
@@ -36,6 +37,30 @@
           :|LAST_INSERT_ID()|)))
 
 
+(defun update-build (conn id status &optional logs)
+  "update the build associated with ID
+  status: one of :running :stopped :passed :failed
+  logs: string of logs (left the same if null)"
+  (dbi:with-transaction conn
+    (update-build-status conn id status)
+    (if logs
+      (update-build-logs conn id logs))))
+
+
+(defun update-build-status (conn id status)
+  "update status of build ID to one of
+  :running :stopped :passed :failed"
+  (db-oneshot conn
+              "UPDATE Build SET status=? WHERE id=?"
+              (stattoi status) id))
+
+
+(defun update-build-logs (conn id logs)
+  "set the logs for build ID"
+  (db-oneshot conn
+              "UPDATE Build SET logs=? WHERE id=?"
+              logs id))
+
 
 (defun db-oneshot (conn qstr &rest vals)
   (let ((query (dbi:prepare conn qstr)))
@@ -43,11 +68,11 @@
 
 
 (defun itostat (i)
-  (elt #(:running :unfinished :passed :failed) i))
+  (elt #(:running :stopped :passed :failed) i))
 
 
 (defun stattoi (stat)
-  (getf '(:running 0 :unfinished 1 :passed 2 :failed 3) stat))
+  (getf '(:running 0 :stopped 1 :passed 2 :failed 3) stat))
 
 
 (defun btoi (bool)

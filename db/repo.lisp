@@ -5,7 +5,8 @@
     #:create
     #:get-repo
     #:get-by-info
-    #:get-status))
+    #:get-status
+    #:get-builds))
 
 (in-package :peterci.db.repo)
 
@@ -55,3 +56,14 @@
     (if res
       (itostat res)
       res)))
+
+
+(defun get-builds (conn id)
+  "get the repo's builds"
+  (mapcar #'convert-build-record
+          (dbi:fetch-all
+            (db-oneshot
+              conn
+              "SELECT * FROM Build
+              WHERE repo=? ORDER BY id DESC"
+              id))))

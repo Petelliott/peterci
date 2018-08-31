@@ -43,22 +43,31 @@
                   provider usr repo))))
 
 
-(defun get-status (conn id)
+(defun get-status (conn id &optional (branch "master"))
   "get the repo's build status"
   (let ((res (getf
                (dbi:fetch (db-oneshot
                             conn
                             "SELECT status FROM Build
                             WHERE repo=? AND (status=2 OR status=3)
+                                  AND branch=?
                             ORDER BY id DESC"
-                            id))
+                            id branch))
                :|status|)))
     (if res
       (itostat res)
       res)))
 
 
-(defun get-builds (conn id)
+(defun get-builds (conn id &optional branch)
+  "get the builds of a repo, if branch is specified,
+   get only those of branch"
+  (if branch
+    (get-builds-branch conn id branch)
+    (get-builds-all conn id)))
+
+
+(defun get-builds-all (conn id)
   "get the repo's builds"
   (mapcar #'convert-build-record
           (dbi:fetch-all
@@ -67,3 +76,15 @@
               "SELECT * FROM Build
               WHERE repo=? ORDER BY id DESC"
               id))))
+
+
+(defun get-builds-branch (conn id branch)
+  "get the repo's builds on branch"
+  (mapcar #'convert-build-record
+          (dbi:fetch-all
+            (db-oneshot
+              conn
+              "SELECT * FROM Build
+              WHERE repo=? AND branch=?
+              ORDER BY id DESC"
+              id branch))))

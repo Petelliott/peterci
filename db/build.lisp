@@ -10,13 +10,14 @@
 (in-package :peterci.db.build)
 
 
-(defun create (conn repo &optional (status :running) logs)
+(defun create (conn repo hash branch &optional (status :running) logs)
   (dbi:with-transaction conn
     (db-oneshot conn
                 "INSERT INTO Build
-                (repo, status, logs)
-                VALUES (?, ?, ?)"
-                repo (stattoi status) logs)
+                (repo, status, logs, branch, hash)
+                VALUES (?, ?, ?, ?, ?)"
+                repo (stattoi status) logs
+                branch hash)
     (getf (dbi:fetch
             (db-oneshot conn "SELECT LAST_INSERT_ID()"))
           :|LAST_INSERT_ID()|)))

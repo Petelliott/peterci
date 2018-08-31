@@ -14,6 +14,8 @@ CREATE TABLE Build (
     status TINYINT DEFAULT 0,
     time DATETIME DEFAULT CURRENT_TIMESTAMP,
     logs TEXT,
+    branch varchar(255) NOT NULL,
+    hash char(40) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (repo) REFERENCES Repo(id)
 );

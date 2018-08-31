@@ -1,20 +1,31 @@
 ;;; generic methods for repo access
-(defpackage :repo
+(defpackage :peterci.repo
   (:use :cl)
   (:export
     #:get-tarball
-    #:repo-name
-    #:set-ci-status
-    #:do-on-push))
+    #:register-service
+    #:make-repo))
 
 
 (in-package :repo)
 
+;; downloads a tarball of the repo and returns it's path or stream
+;; (streams are not yet supported by dexador
+(defgeneric get-tarball (repo refspec))
 
-(defgeneric get-tarball (repo))
 
-(defgeneric repo-name (repo))
+(defvar *repo-hash* (make-hash-table))
 
-(defgeneric set-ci-status (repo status))
 
-(defgeneric do-on-push (repo func))
+(defun register-service (provider creat-fun)
+  "registers a service provider with a function
+   that takes a username and repo and returns
+   an object with the neccesary generics defined"
+  (setf (gethash provider *repo-hash*) creat-fun))
+
+
+(defun make-repo (provider usr repo)
+  "create a repo with the given characteristics"
+  (funcall
+    (gethash provider *repo-hash*)
+    usr repo))

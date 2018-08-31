@@ -8,7 +8,8 @@
 
 (defsystem peterci.builder
   :depends-on (:cl-json
-               :dexador)
+               :dexador
+               :peterci.util)
   :components ((:module "builder"
                 :components
                 ((:file "docker")

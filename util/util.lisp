@@ -3,6 +3,7 @@
   (:nicknames :putil)
   (:use :cl)
   (:export
+    #:stream-pipe
     #:pmerge
     #:starts-with
     #:ends-with
@@ -10,6 +11,16 @@
     #:json-get))
 
 (in-package :peterci.util)
+
+
+(defun stream-pipe (in-stream out-stream)
+  "copies a byte stream from in-stream to
+   out-stream"
+  (loop
+    (let ((ch (read-byte in-stream nil)))
+      (if (null ch)
+        (return)
+        (write-byte ch out-stream)))))
 
 
 (defun pmerge (&rest paths)

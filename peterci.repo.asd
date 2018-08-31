@@ -9,7 +9,8 @@
 
 (defsystem peterci.repo
   :depends-on (:cl-json
-               :dexador)
+               :dexador
+               :peterci.util)
   :components ((:module "repo"
                 :components
                 ((:file "repo")

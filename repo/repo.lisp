@@ -1,5 +1,6 @@
 ;;; generic methods for repo access
 (defpackage :peterci.repo
+  (:nicknames :ci-repo)
   (:use :cl)
   (:export
     #:get-tarball
@@ -7,14 +8,14 @@
     #:make-repo))
 
 
-(in-package :repo)
+(in-package :peterci.repo)
 
-;; downloads a tarball of the repo and returns it's path or stream
-;; (streams are not yet supported by dexador
-(defgeneric get-tarball (repo refspec))
+;; downloads a tarball of the repo and returns a strem
+;; unless strm is set, in which case it writes to strm
+(defgeneric get-tarball (repo refspec &optional strm))
 
 
-(defvar *repo-hash* (make-hash-table))
+(defvar *repo-hash* (make-hash-table :test #'equal))
 
 
 (defun register-service (provider creat-fun)

@@ -1,6 +1,6 @@
 (defpackage :peterci.repo.github
   (:nicknames github-driver)
-  (:use :cl :peterci.repo)
+  (:use :cl :peterci.repo :peterci.util)
   (:export
     ))
 
@@ -19,5 +19,15 @@
 (register-service "github" #'make-gh-repo-call)
 
 
-(defmethod get-tarball ((repo gh-repo) refspec)
-  (dex-get
+(defmethod get-tarball ((repo gh-repo) refspec &optional strm)
+  (let ((tar-strm
+          (dex:get
+            (pmerge "https://api.github.com/repos"
+                    (gh-repo-username repo)
+                    (gh-repo-repo repo)
+                    "tarball" refspec)
+            :want-stream t
+            :force-binary t)))
+    (if strm
+      (stream-pipe tar-strm strm)
+      tar-strm)))

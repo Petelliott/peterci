@@ -4,7 +4,8 @@
   (:export
     #:create
     #:get-repo
-    #:get-by-info))
+    #:get-by-info
+    #:get-status))
 
 (in-package :peterci.db.repo)
 
@@ -39,3 +40,18 @@
                   "SELECT * FROM Repo WHERE
                   provider=? AND username=? AND repo=?"
                   provider usr repo))))
+
+
+(defun get-status (conn id)
+  "get the repo's build status"
+  (let ((res (getf
+               (dbi:fetch (db-oneshot
+                            conn
+                            "SELECT status FROM Build
+                            WHERE repo=? AND (status=2 OR status=3)
+                            ORDER BY id DESC"
+                            id))
+               :|status|)))
+    (if res
+      (itostat res)
+      res)))

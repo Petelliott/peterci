@@ -1,8 +1,6 @@
 (defpackage :peterci.repo.github
   (:nicknames github-driver)
-  (:use :cl :peterci.repo :peterci.util)
-  (:export
-    ))
+  (:use :cl :peterci.repo :peterci.util))
 
 (in-package :peterci.repo.github)
 

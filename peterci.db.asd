@@ -11,4 +11,5 @@
   :components ((:module "db"
                 :components
                 ((:file "util")
-                 (:file "db")))))
+                 (:file "repo")
+                 (:file "build")))))

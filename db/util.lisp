@@ -1,5 +1,5 @@
 (defpackage :peterci.db.util
-  (:nicknames :db-util)
+  (:nicknames :db.util)
   (:use cl)
   (:export
     #:convert-repo-record
@@ -15,11 +15,13 @@
 
 
 (defun convert-repo-record (record)
-  (plist-set record :|active| (itob (getf record :|active|))))
+  (if record
+    (plist-set record :|active| (itob (getf record :|active|)))))
 
 
 (defun convert-build-record (record)
-  (plist-set record :|status| (itostat (getf record :|status|))))
+  (if record
+    (plist-set record :|status| (itostat (getf record :|status|)))))
 
 
 (defun db-oneshot (conn qstr &rest vals)

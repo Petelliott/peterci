@@ -8,6 +8,8 @@
 
 (defsystem peterci.api
   :depends-on (:ningle
+               :cl-dbi
+               :clack
                :peterci.builder
                :peterci.db
                :peterci.repo)

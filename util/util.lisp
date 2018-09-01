@@ -3,6 +3,7 @@
   (:nicknames :putil)
   (:use :cl)
   (:export
+    #:plist-to-alist
     #:stream-pipe
     #:pmerge
     #:starts-with
@@ -11,6 +12,13 @@
     #:json-get))
 
 (in-package :peterci.util)
+
+
+(defun plist-to-alist (plist)
+  (if plist
+    (cons
+      (cons (first plist) (second plist))
+      (plist-to-alist (cddr plist)))))
 
 
 (defun stream-pipe (in-stream out-stream)

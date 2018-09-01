@@ -12,7 +12,10 @@
                :clack
                :peterci.builder
                :peterci.db
-               :peterci.repo)
+               :peterci.repo
+               :peterci.util)
   :components ((:module "api"
                 :components
-                ((:file "api")))))
+                ((:file "util")
+                 (:file "api")
+                 (:file "repo")))))

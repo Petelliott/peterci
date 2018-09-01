@@ -32,6 +32,9 @@
 
 (defvar *handler*)
 
+
+;; TODO: these functions are buggy as fuck
+
 (defun start ()
     (setf *conn* (apply #'dbi:connect
                         (getf *config* :db)))

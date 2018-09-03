@@ -26,6 +26,33 @@
                                    (cdr (assoc :repo params))))))))
 
 
+(defun set-active (conn repo active)
+  (api.util:status 204)
+  (db.repo:set-active conn
+                      repo
+                      (api.util:truthy active)))
+
+
+(setf (ningle:route api:*app* "/repo/:repo/active" :method :POST)
+      (lambda (params)
+        (set-active api:*conn*
+                    (cdr (assoc :repo params))
+                    (cdr (assoc "active" params :test #'string=)))))
+
+
+(setf (ningle:route api:*app* "/repo/:provider/:user/:repo/active" :method :POST)
+      (lambda (params)
+        (let ((id (getf (db.repo:get-by-info
+                          api:*conn*
+                          (cdr (assoc :provider params))
+                          (cdr (Assoc :user params))
+                          (cdr (assoc :repo params)))
+                        :|id|)))
+          (set-active api:*conn*
+                      id
+                      (cdr (assoc "active" params :test #'string=))))))
+
+
 (defun status-image (repo &optional (branch "master"))
   "redirect to a status badge for the repo and branch"
   (api.util:status 303)
@@ -75,4 +102,3 @@
           (cdr (assoc :user params))
           (cdr (assoc :repo params))
           (cdr (assoc :branch params)))))
-

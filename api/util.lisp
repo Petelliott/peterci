@@ -4,7 +4,8 @@
   (:export
     #:headers
     #:nf-on-nil
-    #:status))
+    #:status
+    #:truthy))
 
 (in-package :peterci.api.util)
 
@@ -23,3 +24,12 @@
 
 (defun status (status)
   (setf (lack.response:response-status ningle:*response*) status))
+
+
+(defun truthy (val)
+  (cdr (assoc
+         val
+         '((t . t)
+           ("true" . t)
+           (1 . t))
+         :test #'equal)))

@@ -12,35 +12,27 @@
 
 
 (defvar *app* (make-instance 'ningle:<app>))
-
 (defvar *conn*)
+(defvar *config*)
 
-(defvar *config* '(:clack (*app*)
+(defvar def-config '(:clack ()
                    :db    (:mysql
                            :database-name "peterci"
                            :username "root")))
 
 
-(defmacro with-config-db (&rest blck)
-  `(progn
-     (setf *conn* (apply #'dbi:connect
-                         (getf *config* :db)))
-     (unwind-protect
-       (progn ,@blck)
-       (dbi:disconnect *conn*))))
-
-
-(defvar *handler*)
-
-
 ;; TODO: these functions are buggy as fuck
 
-(defun start ()
-    (setf *conn* (apply #'dbi:connect
-                        (getf *config* :db)))
-    (setf *handler* (apply #'clack:clackup (getf *config* :clack))))
+
+(defun start (&optional (config def-config))
+  (let* ((*config* config)
+         (*conn* (apply #'dbi:connect
+                       (getf *config* :db))))
+    (list
+      :clack (apply #'clack:clackup *app* (getf *config* :clack))
+      :db-conn *conn*)))
 
 
-(defun stop ()
-  (clack:stop *handler*)
-  (dbi:disconnect *conn*))
+(defun stop (handler)
+  (clack:stop (getf handler :clack))
+  (dbi:disconnect (getf handler :db-conn)))

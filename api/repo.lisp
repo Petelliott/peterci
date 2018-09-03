@@ -1,8 +1,6 @@
 (defpackage :peterci.api.repo
   (:nicknames :api.repo)
-  (:use :cl)
-  (:export
-    ))
+  (:use :cl))
 
 (in-package :peterci.api.repo)
 

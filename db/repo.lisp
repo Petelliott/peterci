@@ -4,6 +4,7 @@
   (:export
     #:create
     #:get-repo
+    #:set-active
     #:get-by-info
     #:get-status
     #:get-builds))
@@ -31,6 +32,14 @@
       (db-oneshot conn
                   "SELECT * FROM Repo WHERE id=?"
                   id))))
+
+
+(defun set-active (conn repo &optional (active t))
+  "sets the repo to active or not"
+  (dbi:do-sql conn
+              "UPDATE Repo SET active=? WHERE id=?"
+              (db.util:btoi active) repo))
+
 
 
 (defun get-by-info (conn provider usr repo)

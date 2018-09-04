@@ -39,7 +39,7 @@
 (defun url-to-repo (conn params)
   "convert provider/user/repo in url to a repo id"
   (getf (db.repo:get-by-info
-          api:*conn*
+          conn
           (cdr (assoc :provider params))
           (cdr (assoc :user params))
           (cdr (assoc :repo params)))

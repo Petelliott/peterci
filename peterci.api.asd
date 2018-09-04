@@ -18,4 +18,5 @@
                 :components
                 ((:file "util")
                  (:file "api")
-                 (:file "repo")))))
+                 (:file "repo")
+                 (:file "github")))))

@@ -5,7 +5,8 @@
     #:headers
     #:nf-on-nil
     #:status
-    #:truthy))
+    #:truthy
+    #:url-to-repo))
 
 (in-package :peterci.api.util)
 
@@ -33,3 +34,13 @@
            ("true" . t)
            (1 . t))
          :test #'equal)))
+
+
+(defun url-to-repo (conn params)
+  "convert provider/user/repo in url to a repo id"
+  (getf (db.repo:get-by-info
+          api:*conn*
+          (cdr (assoc :provider params))
+          (cdr (assoc :user params))
+          (cdr (assoc :repo params)))
+        :|id|))

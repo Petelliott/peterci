@@ -42,12 +42,7 @@
 
 (setf (ningle:route api:*app* "/repo/:provider/:user/:repo/active" :method :POST)
       (lambda (params)
-        (let ((id (getf (db.repo:get-by-info
-                          api:*conn*
-                          (cdr (assoc :provider params))
-                          (cdr (Assoc :user params))
-                          (cdr (assoc :repo params)))
-                        :|id|)))
+        (let ((id (api.util:url-to-repo api:*conn* params)))
           (set-active api:*conn*
                       id
                       (cdr (assoc "active" params :test #'string=))))))
@@ -80,25 +75,14 @@
                       (cdr (assoc :branch params)))))
 
 
-(defun status-image-lookup (provider usr repo &optional (branch "master"))
-  (let ((id (getf (db.repo:get-by-info
-                    api:*conn* provider usr repo)
-                  :|id|)))
-    (status-image id branch)))
-
-
 (setf (ningle:route api:*app* "/statusimage/:provider/:user/:repo" :method :GET)
       (lambda (params)
-        (status-image-lookup
-          (cdr (assoc :provider params))
-          (cdr (assoc :user params))
-          (cdr (assoc :repo params)))))
+        (let ((rid (api.util:url-to-repo api:*conn* params)))
+          (status-image rid))))
 
 
 (setf (ningle:route api:*app* "/statusimage/:provider/:user/:repo/:branch" :method :GET)
       (lambda (params)
-        (status-image-lookup
-          (cdr (assoc :provider params))
-          (cdr (assoc :user params))
-          (cdr (assoc :repo params))
-          (cdr (assoc :branch params)))))
+        (let ((rid (api.util:url-to-repo api:*conn* params)))
+          (status-image rid
+                        (cdr (assoc :branch params))))))

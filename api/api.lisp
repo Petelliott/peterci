@@ -16,9 +16,11 @@
 (defvar *config*)
 
 (defvar def-config '(:clack ()
-                   :db    (:mysql
-                           :database-name "peterci"
-                           :username "root")))
+                     :db    (:mysql
+                              :database-name "peterci"
+                              :username "root")
+                     :gh-key #P"/home/peter/tokens/peterci-dev.2018-09-04.private-key.pem"))
+
 
 
 ;; TODO: these functions are buggy as fuck

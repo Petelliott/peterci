@@ -10,6 +10,8 @@
   :depends-on (:ningle
                :cl-dbi
                :clack
+               :jose
+               :pem
                :peterci.builder
                :peterci.db
                :peterci.repo
